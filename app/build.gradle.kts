@@ -13,7 +13,7 @@ plugins {
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
+    // Use Maven Central for resolving dependencies.I
     mavenCentral()
 }
 
@@ -22,7 +22,7 @@ dependencies {
     implementation("com.google.guava:guava:30.1.1-jre")
     implementation("com.github.kokorin.jaffree:jaffree:2021.11.06")
     implementation("org.slf4j:slf4j-api:1.7.25")
-    implementation("org.apahche.spark:spark-core_2.12:3.2.0")
+    implementation("org.apache.spark:spark-core_2.12:3.2.0")
     implementation("org.bytedeco:javacv-platform:1.5.6")
     implementation("org.apache.hadoop:hadoop-hdfs:3.3.1")
 }
