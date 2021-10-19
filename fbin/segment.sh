@@ -1,24 +1,7 @@
-#'segment_list name'
-#Generate also a listfile named name. If not specified no listfile is generated.
+#$1 us video file
+#$2 is step size
 
-#'segment_list_entry_prefix prefix'
-#Prepend prefix to each entry. Useful to generate absolute paths. By default no prefix is applied.
-
-#'segment_list_type type'
-
-#'segment_time time'
-#Set segment duration to time, the value must be a duration specification. Default value is "2". See also the 'segment_times' option.
-#Note that splitting may not be accurate, unless you force the reference stream key-frames at the given time. See the introductory notice and the examples below.
-
-#'segment_time_delta delta'
-#Specify the accuracy time when selecting the start time for a segment, expressed as a duration specification. Default value is "0".
-#
-#When delta is specified a key-frame will start a new segment if its PTS satisfies the relation:
-#
-#PTS >= start_time - time_delta
-#This option is useful when splitting video content, which is always split at GOP boundaries, in case a key frame is found just before the specified split time.
-#
-#In particular may be used in combination with the 'ffmpeg' option force_key_frames. The key frame times specified by force_key_frames may not be set accurately because of rounding issues, with the consequence that a key frame time may result set just before the specified time. For constant frame rate videos a value of 1/(2*frame_rate) should address the worst case mismatch between the specified time and the time set by force_key_frames.
+#find timestamps of each keyframe
 key_frames=$(ffprobe \
   -hide_banner -loglevel error \
   -select_streams v \
@@ -29,16 +12,71 @@ key_frames=$(ffprobe \
   $1 |
 cut -d ',' -f 2 |
 grep -E '^[\.0-9]+$')
-
+#put key_frames into and array
 key_frames=($key_frames)
 
-segment_end=$2
+#find length video, round up to nearest integer
+duration=$(ffprobe \
+  -v error \
+  -show_entries format=duration \
+  -of csv \
+  $1 |
+cut -d ',' -f 2)
+#divide by 1 so bc reads scale variable and rounds number
+duration=$(echo "scale=0; ($duration + 0.5)/1" | bc)
 
-for i in "${key_frames[@]}"
-do
-  less_than=$(echo "$i < $segment_end" | bc)
-  echo "$i"
-  echo "$less_than"
+
+#frames that "sandwich:" cuts, could have duplicates
+dup_frames=()
+i=0
+for (( cut_time=$2 ; cut_time < duration ; cut_time+=$2)) ; do
+  #find the two kfs that sandwich the cut
+  frame_ahead=$(echo "$cut_time < ${key_frames[i]}" | bc)
+  while [ "$frame_ahead" -ne 1 ] ; do
+    #advance to next kf
+    ((i+=1))
+    #check if kf is ahead of cut
+    frame_ahead=$(echo "$cut_time < ${key_frames[i]}" | bc)
+    #if we cycled though all the kfs
+    if [ "$i" -ge "${#key_frames[@]}" ] ; then
+      break
+    fi
+  done
+
+  #if we found a sandwich
+  if [ "$frame_ahead" -eq 1 ] ; then
+    if [ "$i" -ge 1 ] ; then
+      dup_frames+=("${key_frames[$((i-1))]}")
+    fi
+    dup_frames+=("${key_frames[$i]}")
+  #else, we cycled through all the kfs
+  else
+    dup_frames+=("${key_frames[$i]}")
+    break
+  fi
 done
 
+#remove duplicates
+keep_frames=()
+for f in "${dup_frames[@]}"; do
+  if [ "${#keep_frames[@]}" -gt 0 ]; then
+    if [ "$f" != "${keep_frames[${#keep_frames[@]} - 1]}" ] ; then
+      keep_frames+=("$f")
+    fi
+    else
+      keep_frames+=("$f")
+  fi
+done
+
+#do a pythonesque join with ,
+echo "${keep_frames[@]}"
+segment_times=""
+for k in "${keep_frames[@]}" ; do
+  segment_times="${segment_times},$k"
+done
+segment_times="${segment_times:1}"
+
+filename="${1%.*}"
+echo filename
+ffmpeg -i "$1" -c copy -f segment -segment_list "${filename}.csv" -segment_list_type csv -segment_times "$segment_times" -reset_timestamps 0 "${filename}%03d.mp4"
 
