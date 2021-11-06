@@ -2,7 +2,9 @@ package com.dvs;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class Segment {
+import java.io.Serializable;
+
+public class Segment implements Serializable {
     @CsvBindByPosition(position = 0)
     private String filename;
 
@@ -11,6 +13,8 @@ public class Segment {
 
     @CsvBindByPosition(position = 2)
     private double endTime;
+
+    public Segment(){};
 
     public String getFilename() {
         return filename;
@@ -22,6 +26,18 @@ public class Segment {
 
     public double getEndTime() {
         return endTime;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public void setStartTime(double startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(double endTime) {
+        this.endTime = endTime;
     }
 
     public boolean overlaps(double start, double end)  {

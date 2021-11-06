@@ -12,11 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class App {
-    //arg 0 is time slices
-    //arg 1 is the outputfile
+    //arg 0 is the outputfile
+    //arg 1 is time slices
     //one argument for each csv file
     public static void main(String[] args) {
-        int segmentSize = Integer.parseInt(args[0]);
+        int segmentSize = Integer.parseInt(args[1]);
         String[] csvFiles = Arrays.copyOfRange(args, 2, args.length);
         try {
             SegmentAssigner segmentAssigner = new SegmentAssigner(segmentSize, csvFiles);
@@ -28,7 +28,7 @@ public class App {
             SparkConf conf = new SparkConf().setAppName("dsvStitching");
             JavaSparkContext sc = new JavaSparkContext(conf);
             JavaRDD<Task> taskJavaRDD= sc.parallelize(tasks);
-            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[1]));
+            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[0]));
             outputJavaRDD.collect().forEach(System.out::println);
 
         } catch (FileNotFoundException e) {

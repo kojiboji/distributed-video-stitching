@@ -79,5 +79,6 @@ segment_times="${segment_times:1}"
 filename="$(basename -- $1)"
 filename="${filename%.*}"
 echo filename
-ffmpeg -i "$1" -c copy -f segment -segment_list "/tmp/${filename}.csv" -segment_list_type csv -segment_times "$segment_times" -reset_timestamps 0 "/tmp/${filename}%03d.mp4"
+ffmpeg -i "$1" -c copy -f segment -segment_list "/tmp/${filename}.csv" -segment_list_type csv -segment_times "$segment_times" -reset_timestamps 1 "/tmp/${filename}%03d.mp4"
 
+sed -i -e 's/^/\/tmp\//' "/tmp/${filename}.csv"

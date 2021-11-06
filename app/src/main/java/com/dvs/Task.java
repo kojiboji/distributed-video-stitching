@@ -1,11 +1,14 @@
 package com.dvs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Task {
-    private final double start;
-    private final double end;
+public class Task implements Serializable {
+    private double start;
+    private double end;
     private ArrayList<ArrayList<Segment>> segments;
+
+    public Task(){};
 
     public Task(double start, double end, int size) {
         this.start = start;
@@ -26,6 +29,18 @@ public class Task {
 
     public ArrayList<ArrayList<Segment>> getSegments() {
         return segments;
+    }
+
+    public void setStart(double start) {
+        this.start = start;
+    }
+
+    public void setEnd(double end) {
+        this.end = end;
+    }
+
+    public void setSegments(ArrayList<ArrayList<Segment>> segments) {
+        this.segments = segments;
     }
 
     public void addSegment(int index, Segment segment){
