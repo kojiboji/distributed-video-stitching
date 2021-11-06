@@ -23,13 +23,15 @@ public class App {
             List<Task> tasks = segmentAssigner.getTasks();
             for(Task task: tasks){
                 System.out.println(task);
+                DVStitcher dvStitcher = new DVStitcher(task);
+                dvStitcher.stitch(String.format("/tmp/%1$s-%2$d.mp4", args[0], (int)task.getStart()));
             }
 
-            SparkConf conf = new SparkConf().setAppName("dsvStitching");
-            JavaSparkContext sc = new JavaSparkContext(conf);
-            JavaRDD<Task> taskJavaRDD= sc.parallelize(tasks);
-            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[0]));
-            outputJavaRDD.collect().forEach(System.out::println);
+//            SparkConf conf = new SparkConf().setAppName("dsvStitching");
+//            JavaSparkContext sc = new JavaSparkContext(conf);
+//            JavaRDD<Task> taskJavaRDD= sc.parallelize(tasks);
+//            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[0]));
+//            outputJavaRDD.collect().forEach(System.out::println);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

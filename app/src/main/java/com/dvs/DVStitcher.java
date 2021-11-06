@@ -36,9 +36,9 @@ public class DVStitcher {
         Size frameSize = pano.size();
         int fourcc = VideoWriter.fourcc((byte)'m', (byte)'p', (byte)'4', (byte)'v');
         VideoWriter videoWriter = new VideoWriter(outputFile, fourcc, fps, frameSize);
-        for(int i = 0; i < round((task.getEnd() - task.getStart())/fps * 1000) -1 ; i++){
+        for(int i = 1; i < round((task.getEnd() - task.getStart())/fps * 1000); i++){
             pano = stitchFrame(i);
-//            videoWriter.write(pano);
+            videoWriter.write(pano);
         }
         videoWriter.close();
         return outputFile;
@@ -56,12 +56,13 @@ public class DVStitcher {
                 videoCaptures.get(i).open(segmentTracker.get(i).next().getFilename());
                 frameRead = videoCaptures.get(i).read(grabbed);
             }
-            imwrite("out"+n+"-"+i+".jpg", grabbed);
+            System.out.println("poop");
+//            imwrite("/tmp/out"+n+"-"+i+".jpg", grabbed);
             images.push_back(grabbed);
         }
         int statusCode = stitcher.estimateTransform(images);
         System.out.println("STATUSCODE:" + statusCode + ",n:" +n);
-//        stitcher.composePanorama(images, pano);
+        stitcher.composePanorama(images, pano);
         return pano;
     }
 
