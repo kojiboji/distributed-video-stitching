@@ -24,16 +24,16 @@ public class App {
             for(Task task: tasks){
                 if(task.getStart() > 5) {
                     System.out.println(task);
-                    DVStitcher dvStitcher = new DVStitcher(task);
-                    dvStitcher.stitch(args[0]);
+//                    DVStitcher dvStitcher = new DVStitcher(task);
+//                    dvStitcher.stitch(args[0]);
                 }
             }
 
-//            SparkConf conf = new SparkConf().setAppName("dsvStitching");
-//            JavaSparkContext sc = new JavaSparkContext(conf);
-//            JavaRDD<Task> taskJavaRDD= sc.parallelize(tasks);
-//            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[0]));
-//            outputJavaRDD.collect().forEach(System.out::println);
+            SparkConf conf = new SparkConf().setAppName("dsvStitching");
+            JavaSparkContext sc = new JavaSparkContext(conf);
+            JavaRDD<Task> taskJavaRDD= sc.parallelize(tasks);
+            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[0]));
+            outputJavaRDD.collect().forEach(System.out::println);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
