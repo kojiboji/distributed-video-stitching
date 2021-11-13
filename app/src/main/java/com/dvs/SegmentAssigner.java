@@ -41,7 +41,6 @@ public class SegmentAssigner {
                     listIndices[listIndex]--;
                 }
                 while(listIndices[listIndex] < segmentLists.get(listIndex).size()) {
-                    System.out.println("in while");
                     Segment nextSegment = segmentLists.get(listIndex).get(listIndices[listIndex]);
                     if (nextSegment.overlaps(task)) {
                         task.addSegment(listIndex, nextSegment);

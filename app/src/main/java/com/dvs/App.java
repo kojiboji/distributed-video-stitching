@@ -22,9 +22,11 @@ public class App {
             SegmentAssigner segmentAssigner = new SegmentAssigner(segmentSize, csvFiles);
             List<Task> tasks = segmentAssigner.getTasks();
             for(Task task: tasks){
-                System.out.println(task);
-                DVStitcher dvStitcher = new DVStitcher(task);
-                dvStitcher.stitch(String.format("/tmp/%1$s-%2$d.mp4", args[0], (int)task.getStart()));
+                if(task.getStart() > 5) {
+                    System.out.println(task);
+                    DVStitcher dvStitcher = new DVStitcher(task);
+                    dvStitcher.stitch(args[0]);
+                }
             }
 
 //            SparkConf conf = new SparkConf().setAppName("dsvStitching");

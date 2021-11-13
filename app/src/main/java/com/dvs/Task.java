@@ -44,7 +44,6 @@ public class Task implements Serializable {
     }
 
     public void addSegment(int index, Segment segment){
-        System.out.println("hello");
         this.segments.get(index).add(segment);
     }
 

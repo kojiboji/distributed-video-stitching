@@ -41,7 +41,6 @@ public class Segment implements Serializable {
     }
 
     public boolean overlaps(double start, double end)  {
-        System.out.println("in overlaps");
         return ((startTime <= start && start <= endTime) ||
                 (startTime <= end && end <= endTime) ||
                 (start <= startTime && endTime <= end));
