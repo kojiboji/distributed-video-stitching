@@ -15,12 +15,9 @@ public class SegmentAssigner {
     private final ArrayList<ArrayList<Segment> > segmentLists;
     public List<Task> tasks;
 
-    public SegmentAssigner(int taskDuration, String @NotNull [] csvFiles) throws FileNotFoundException {
+    public SegmentAssigner(int taskDuration, ArrayList<ArrayList<Segment>> segmentLists){
         this.taskDuration = taskDuration;
-        segmentLists = new ArrayList<>(csvFiles.length);
-        for (String csvFile: csvFiles) {
-            segmentLists.add(new ArrayList<>(new CsvToBeanBuilder<Segment>(new FileReader(csvFile)).withType(Segment.class).build().parse()));
-        }
+        this.segmentLists = segmentLists;
         this.tasks = createTasks();
     }
 

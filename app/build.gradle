@@ -22,14 +22,26 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 
-    compileOnly 'org.apache.spark:spark-sql_2.12:3.2.0'
+    //for spark
+//    compileOnly 'org.apache.spark:spark-sql_2.12:3.2.0'
+//    //for logging
+//    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+//    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+    //for spark
+    implementation 'org.apache.spark:spark-sql_2.12:3.2.0'
+    //for logging
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+
     //for reading CSV
     implementation 'com.opencsv:opencsv:5.5.2'
     //for stitching
     implementation 'org.bytedeco:javacv-platform:1.5.6'
-    //for logging
-    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
-    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+
+
+    //for s3
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
 }
 
 
