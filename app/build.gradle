@@ -27,6 +27,9 @@ dependencies {
     implementation 'com.opencsv:opencsv:5.5.2'
     //for stitching
     implementation 'org.bytedeco:javacv-platform:1.5.6'
+    //for logging
+    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
 }
 
 

@@ -61,9 +61,16 @@ keep_frames=()
 for f in "${dup_frames[@]}"; do
   if [ "${#keep_frames[@]}" -gt 0 ]; then
     if [ "$f" != "${keep_frames[${#keep_frames[@]} - 1]}" ] ; then
-      keep_frames+=("$f")
+      if [ "${#keep_frames[@]}" -gt 1 ]; then
+          if [ "$f" != "${keep_frames[${#keep_frames[@]} - 2]}" ] ; then
+            keep_frames+=("$f")
+          fi
+      else
+        keep_frames+=("$f")
+      fi
     fi
     else
+      echo what
       keep_frames+=("$f")
   fi
 done
@@ -78,7 +85,7 @@ segment_times="${segment_times:1}"
 
 filename="$(basename -- $1)"
 filename="${filename%.*}"
-echo filename
 ffmpeg -i "$1" -c copy -f segment -segment_list "/tmp/${filename}.csv" -segment_list_type csv -segment_times "$segment_times" -reset_timestamps 1 "/tmp/${filename}%03d.mp4"
 
-sed -i -e 's/^/\/tmp\//' "/tmp/${filename}.csv"
+#sed -i -e 's/^/\/tmp\//' "/tmp/${filename}.csv"
+cut -f 1 -d ',' < "/tmp/${filename}.csv" | xargs -I % sh -c 'aws s3api put-object --bucket dvs-tmp --key % --body /tmp/% > /dev/null'

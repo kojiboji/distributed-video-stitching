@@ -1,5 +1,6 @@
 package com.dvs;
 
+import org.apache.log4j.Logger;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Size;
@@ -11,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import static java.lang.Math.round;
-import static org.bytedeco.opencv.global.opencv_highgui.imshow;
-import static org.bytedeco.opencv.global.opencv_highgui.waitKey;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
 import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_FPS;
 import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_POS_MSEC;
@@ -26,19 +24,21 @@ public class DVStitcher {
     private VideoWriter videoWriter;
     private Size frameSize;
     private double fps;
+    private static final Logger logger = Logger.getLogger(DVStitcher.class.getName());
 
     public DVStitcher(Task task) {
         this.task = task;
         stitcher = Stitcher.create();
         initializeArrayLists();
+        logger.info(String.format("Starting Task %f-%f", task.getStart(), task.getEnd()));
     }
 
     public String stitch(String outputFilename) {
         String outputFile = String.format("/tmp/%1$s-%2$d.mp4", outputFilename, (int)task.getStart());
-        System.out.println("FILENAME:"+outputFile);
+        logger.info(String.format("Task %f-%f START", task.getStart(), task.getEnd()));
+
         Mat pano = new Mat();
         boolean cameraSetup = false;
-        System.out.printf("number of frames %d\n", round((task.getEnd() - task.getStart()) * fps));
         for(int i = 0; i < round((task.getEnd() - task.getStart()) * fps); i++){
             int statusCode = stitchFrame(pano, i);
             if(statusCode == 0){
@@ -47,7 +47,7 @@ public class DVStitcher {
                     int fourcc = VideoWriter.fourcc((byte)'M', (byte)'J', (byte)'P', (byte)'G');
                     videoWriter = new VideoWriter(outputFile, fourcc, fps, frameSize);
                     cameraSetup = true;
-                    System.out.println("OPENDED CAMERA");
+                    logger.info(String.format("Task %f-%f: Opened camera @ %s", task.getStart(), task.getEnd(), outputFile));
                 }
                 else{
                     Mat placeHolder = new Mat();
@@ -55,16 +55,16 @@ public class DVStitcher {
                     pano = placeHolder;
 
                 }
-                System.out.println("Writing:"+i);
+                logger.debug(String.format("Task %f-%f:Frame %d", task.getStart(), task.getEnd(), i));
                 videoWriter.write(pano);
             }
         }
         if(videoWriter != null && videoWriter.isOpened()) {
             videoWriter.close();
-            System.out.println("CLOSED CAMERA");
+            logger.info(String.format("Task %f-%f: Closed camera @ %s", task.getStart(), task.getEnd(), outputFile));
 
         }
-        System.out.println("DONE");
+        logger.info(String.format("Task %f-%f: END", task.getStart(), task.getEnd()));
         return outputFile;
     }
 
@@ -75,7 +75,7 @@ public class DVStitcher {
             boolean frameRead = videoCaptures.get(i).read(grabbed);
             while(!frameRead){
                 String nextVideo = segmentTracker.get(i).next().getFilename();
-                System.out.printf("Cycle to next video:%s:%d-%d\n", nextVideo, n, i);
+                logger.debug(String.format("\"Task %f-%f: Cycle to next video %s: frame %d\n", task.getStart(), task.getEnd(), nextVideo, n));
                 videoCaptures.get(i).open(nextVideo);
                 frameRead = videoCaptures.get(i).read(grabbed);
             }
@@ -83,7 +83,7 @@ public class DVStitcher {
             images.push_back(grabbed);
         }
         int statusCode = stitcher.estimateTransform(images);
-        System.out.printf("STATUSCODE:%d:FRAME:%d\n", statusCode, n);
+        logger.debug(String.format("\"Task %f-%f: frame %d: code %d\n", task.getStart(), task.getEnd(), n, statusCode));
         if(statusCode == 0) {
             return stitcher.composePanorama(images, pano);
         }
@@ -102,7 +102,7 @@ public class DVStitcher {
             Segment firstSegment = segmentPointer.next();
             VideoCapture videoCapture = new VideoCapture(firstSegment.getFilename());
             double offset = (task.getStart() - firstSegment.getStartTime()) * 1000;
-            System.out.println("OFFSET: " + offset);
+            logger.info(String.format("Task %f-%f: Camera @ %s: offset %f", task.getStart(), task.getEnd(), firstSegment.getFilename(), offset));
             videoCapture.set(CAP_PROP_POS_MSEC, offset);
             videoCaptures.add(videoCapture);
 
