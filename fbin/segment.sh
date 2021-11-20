@@ -88,4 +88,4 @@ filename="${filename%.*}"
 ffmpeg -i "$1" -c copy -f segment -segment_list "/tmp/${filename}.csv" -segment_list_type csv -segment_times "$segment_times" -reset_timestamps 1 "/tmp/${filename}%03d.mp4"
 
 #sed -i -e 's/^/\/tmp\//' "/tmp/${filename}.csv"
-cut -f 1 -d ',' < "/tmp/${filename}.csv" | xargs -I % sh -c 'aws s3api put-object --bucket dvs-tmp --key % --body /tmp/% > /dev/null'
+cut -f 1 -d ',' < "/tmp/${filename}.csv" | xargs -I % sh -c 'aws s3api put-object --bucket dvs-pre --key % --body /tmp/%> /dev/null'

@@ -3,10 +3,6 @@
  */
 package com.dvs;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +17,13 @@ public class App {
         String[] csvFiles = Arrays.copyOfRange(args, 2, args.length);
         try {
             ArrayList<ArrayList<Segment>> segmentLists = SegmentPreprocessor.makeSegments(csvFiles);
-            SegmentAssigner segmentAssigner = new SegmentAssigner(segmentSize, segmentLists);
-            List<Task> tasks = segmentAssigner.getTasks();
+            TaskMaker taskMaker = new TaskMaker(args[0], segmentSize, segmentLists);
+            List<Task> tasks = taskMaker.getTasks();
             for(Task task: tasks){
                 if(task.getStart() > 5) {
                     System.out.println(task);
                     DVStitcher dvStitcher = new DVStitcher(task);
-                    dvStitcher.stitch(args[0]);
+                    dvStitcher.stitch();
                     break;
                 }
             }

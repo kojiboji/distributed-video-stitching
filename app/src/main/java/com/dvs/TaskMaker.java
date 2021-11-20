@@ -10,12 +10,14 @@ import java.util.List;
 
 import static java.lang.Math.min;
 
-public class SegmentAssigner {
+public class TaskMaker {
+    private final String name;
     private final int taskDuration;
     private final ArrayList<ArrayList<Segment> > segmentLists;
     public List<Task> tasks;
 
-    public SegmentAssigner(int taskDuration, ArrayList<ArrayList<Segment>> segmentLists){
+    public TaskMaker(String name, int taskDuration, ArrayList<ArrayList<Segment>> segmentLists){
+        this.name = name;
         this.taskDuration = taskDuration;
         this.segmentLists = segmentLists;
         this.tasks = createTasks();
@@ -29,7 +31,7 @@ public class SegmentAssigner {
         }
         List<Task> tasks = new ArrayList<>();
         for(double start = 0; start < minDuration; start+=taskDuration) {
-            tasks.add(new Task(start, min(start+taskDuration, minDuration), segmentLists.size()));
+            tasks.add(new Task(name, start, min(start+taskDuration, minDuration), segmentLists.size()));
         }
         int[] listIndices = new int[segmentLists.size()];
         for(Task task: tasks){

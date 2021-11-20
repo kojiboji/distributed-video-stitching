@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class Segment implements Serializable {
     @CsvBindByPosition(position = 0)
-    private String filename;
+    private String basename;
 
     @CsvBindByPosition(position = 1)
     private double startTime;
@@ -16,8 +16,12 @@ public class Segment implements Serializable {
 
     public Segment(){};
 
-    public String getFilename() {
-        return filename;
+    public String getBasename() {
+        return basename;
+    }
+
+    public String getLocalName() {
+        return Config.DIR_PRE + basename;
     }
 
     public double getStartTime() {
@@ -28,8 +32,8 @@ public class Segment implements Serializable {
         return endTime;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setBasename(String basename) {
+        this.basename = basename;
     }
 
     public void setStartTime(double startTime) {
@@ -50,6 +54,6 @@ public class Segment implements Serializable {
     }
 
     public String toString(){
-        return String.format("%f:%f:%s", startTime, endTime, filename);
+        return String.format("%f:%f:%s", startTime, endTime, basename);
     }
 }

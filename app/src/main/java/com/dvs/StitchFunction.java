@@ -11,6 +11,6 @@ public class StitchFunction implements Function<Task, String> {
 
     public String call(Task t) {
         DVStitcher dvStitcher = new DVStitcher(t);
-        return dvStitcher.stitch(outputFilename);
+        return dvStitcher.stitch();
     }
 }
