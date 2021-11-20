@@ -87,10 +87,6 @@ public class DVStitcher {
             logger.info(String.format("Task %f-%f: Camera @ %s: offset %f", task.getStart(), task.getEnd(), firstSegment.getBasename(), offset));
             videoCapture.set(CAP_PROP_POS_MSEC, offset);
             videoCaptures.add(videoCapture);
-            Mat img = new Mat();
-            boolean hello = videoCapture.read(img);
-            logger.info(hello);
-            logger.info(videoCapture.isOpened());
         }
         fps = videoCaptures.get(0).get(CAP_PROP_FPS);
     }
@@ -103,7 +99,6 @@ public class DVStitcher {
         logger.info("Before loop");
         logger.info(fps);
         for(int i = 0; i < round((task.getEnd() - task.getStart()) * fps); i++){
-            logger.info("Hello");
             int statusCode = stitchFrame(pano, i);
             if(statusCode == 0){
                 if(!cameraSetup){
@@ -117,7 +112,6 @@ public class DVStitcher {
                     Mat placeHolder = new Mat();
                     resize(pano, placeHolder, frameSize);
                     pano = placeHolder;
-
                 }
                 logger.debug(String.format("Task %f-%f:Frame %d", task.getStart(), task.getEnd(), i));
                 videoWriter.write(pano);
@@ -126,12 +120,11 @@ public class DVStitcher {
         if(videoWriter != null && videoWriter.isOpened()) {
             videoWriter.close();
             logger.info(String.format("Task %f-%f: Closed video for writing @ %s", task.getStart(), task.getEnd(), localVideo));
-
         }
-
-        logger.info(String.format("Task %f-%f: END", task.getStart(), task.getEnd()));
         PutObjectRequest request = new PutObjectRequest(Config.BUCKET_STITCH, task.getBasename(), new File(localVideo));
-//        s3Client.putObject(request);
+        logger.info(String.format("Task %f-%f: Writing to s3", task.getStart(), task.getEnd()));
+        s3Client.putObject(request);
+        logger.info(String.format("Task %f-%f: END", task.getStart(), task.getEnd()));
         return task.getBasename();
     }
 
