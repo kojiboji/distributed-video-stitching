@@ -22,7 +22,7 @@ done
 mkdir -p /tmp/concat/
 
 #stitch videos
-spark-submit --class com.dvs.App app/build/libs/app-all.jar "$1" "$2" "${csvs[@]}" > /tmp/concat/${1}_base.txt
+spark-submit --class com.dvs.App app/build/libs/app-all.jar "$1" "$2" "${csvs[@]}" > "/tmp/concat/${1}_base.txt"
 
 #concat videos
-scripts/concat.sh /tmp/concat/${1}_base.txt $1
+scripts/concat.sh "/tmp/concat/${1}_base.txt" "$1"
