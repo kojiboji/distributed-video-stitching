@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.bytedeco.opencv.opencv_stitching.Stitcher;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class App {
         int segmentSize = Integer.parseInt(args[1]);
         String[] csvFiles = Arrays.copyOfRange(args, 2, args.length);
         try {
+//            Stitcher stitcher = stitcher = Stitcher.create();
             ArrayList<ArrayList<Segment>> segmentLists = SegmentPreprocessor.makeSegments(csvFiles);
             logger.info(String.format("segmentLists: %s", segmentLists));
             TaskMaker taskMaker = new TaskMaker(args[0], segmentSize, segmentLists);
