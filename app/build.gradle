@@ -11,11 +11,16 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'java'
     id 'application'
+    id 'org.bytedeco.gradle-javacpp-build' version '1.5.6'
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+}
+
+ext {
+    javacppPlatform = 'linux-x86_64' // or any other platform, defaults to Loader.getPlatform()
 }
 
 dependencies {
