@@ -96,6 +96,7 @@ public class DVStitcher {
         boolean cameraSetup = false;
         for(int i = 0; i < round((task.getEnd() - task.getStart()) * fps); i++){
             int statusCode = stitchFrame(pano, i);
+            logger.info(String.format("Task %f-%f: Frame %d is %d", task.getStart(), task.getEnd(), i, statusCode));
             if(statusCode == 0){
                 if(!cameraSetup){
                     frameSize = pano.size();
@@ -115,7 +116,7 @@ public class DVStitcher {
                     resize(pano, placeHolder, frameSize);
                     pano = placeHolder;
                 }
-                logger.debug(String.format("Task %f-%f:Frame %d", task.getStart(), task.getEnd(), i));
+                logger.info(String.format("Task %f-%f:Frame %d", task.getStart(), task.getEnd(), i));
                 videoWriter.write(pano);
             }
         }
@@ -140,14 +141,14 @@ public class DVStitcher {
             boolean frameRead = videoCaptures.get(i).read(grabbed);
             while(!frameRead){
                 String nextVideo = segmentTracker.get(i).next().getLocalName();
-                logger.debug(String.format("\"Task %f-%f: Cycle to next video %s: frame %d\n", task.getStart(), task.getEnd(), nextVideo, n));
+                logger.info(String.format("\"Task %f-%f: Cycle to next video %s: frame %d\n", task.getStart(), task.getEnd(), nextVideo, n));
                 videoCaptures.get(i).open(nextVideo, API_PREFERENCE);
                 frameRead = videoCaptures.get(i).read(grabbed);
             }
             images.push_back(grabbed);
         }
         int statusCode = stitcher.estimateTransform(images);
-        logger.debug(String.format("\"Task %f-%f: frame %d: code %d\n", task.getStart(), task.getEnd(), n, statusCode));
+        logger.info(String.format("\"Task %f-%f: frame %d: code %d\n", task.getStart(), task.getEnd(), n, statusCode));
         if(statusCode == 0) {
             return stitcher.composePanorama(images, pano);
         }
