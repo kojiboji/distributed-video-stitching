@@ -85,6 +85,8 @@ public class DVStitcher {
             logger.info(String.format("Task %f-%f: Camera @ %s: offset %f", task.getStart(), task.getEnd(), firstSegment.getBasename(), offset));
             boolean canSet = videoCapture.set(CAP_PROP_POS_MSEC, offset);
             logger.info(String.format("Task %f-%f: Camera @ %s: can set %s", task.getStart(), task.getEnd(), firstSegment.getBasename(), canSet));
+            boolean isOpened = videoCapture.isOpened();
+            logger.info(String.format("Task %f-%f: Camera @ %s: is %s open", task.getStart(), task.getEnd(), firstSegment.getBasename(), isOpened));
             videoCaptures.add(videoCapture);
         }
         fps = videoCaptures.get(0).get(CAP_PROP_FPS);
