@@ -8,6 +8,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.bytedeco.opencv.opencv_stitching.Stitcher;
+import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -20,33 +21,10 @@ public class App {
     //one argument for each csv file
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(DVStitcher.class.getName());
-        int segmentSize = Integer.parseInt(args[1]);
-        String[] csvFiles = Arrays.copyOfRange(args, 2, args.length);
-        try {
-//            Stitcher stitcher = stitcher = Stitcher.create();
-            ArrayList<ArrayList<Segment>> segmentLists = SegmentPreprocessor.makeSegments(csvFiles);
-            logger.info(String.format("segmentLists: %s", segmentLists));
-            TaskMaker taskMaker = new TaskMaker(args[0], segmentSize, segmentLists);
-            List<Task> tasks = taskMaker.getTasks();
-            for(Task task: tasks){
-                logger.info(String.format("Task: %s", task));
-//                    DVStitcher dvStitcher = new DVStitcher(task);
-//                    dvStitcher.stitch();
-//                    break;
-            }
-
-            SparkConf conf = new SparkConf().setAppName("dsvStitching");
-            JavaSparkContext sc = new JavaSparkContext(conf);
-            JavaRDD<Task> taskJavaRDD= sc.parallelize(tasks);
-            JavaRDD<String> outputJavaRDD = taskJavaRDD.map(new StitchFunction(args[0]));
-            outputJavaRDD.collect().forEach(file -> {
-                if(file != null){
-                    System.out.println(file);
-                }
-            });
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        VideoCapture videoCapture1 = new VideoCapture("/tmp/pre/seoul_21_l000.mp4");
+        VideoCapture videoCapture2 = new VideoCapture("~/seoul_21_l.mp4");
+        logger.info("God please");
+        logger.info(videoCapture1.isOpened());
+        logger.info(videoCapture2.isOpened());
     }
 }
