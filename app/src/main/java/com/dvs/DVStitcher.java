@@ -83,10 +83,12 @@ public class DVStitcher {
             VideoCapture videoCapture = new VideoCapture(firstSegment.getLocalName(), API_PREFERENCE);
             double offset = (task.getStart() - firstSegment.getStartTime()) * 1000;
             logger.info(String.format("Task %f-%f: Camera @ %s: offset %f", task.getStart(), task.getEnd(), firstSegment.getBasename(), offset));
-            videoCapture.set(CAP_PROP_POS_MSEC, offset);
+            boolean canSet = videoCapture.set(CAP_PROP_POS_MSEC, offset);
+            logger.info(String.format("Task %f-%f: Camera @ %s: can set %s", task.getStart(), task.getEnd(), firstSegment.getBasename(), canSet));
             videoCaptures.add(videoCapture);
         }
         fps = videoCaptures.get(0).get(CAP_PROP_FPS);
+        logger.info(String.format("Task %f-%f: Camera fps %f", task.getStart(), task.getEnd(),fps));
     }
 
     public String stitch() {
