@@ -20,11 +20,10 @@ public class App {
     //arg 1 is time slices
     //one argument for each csv file
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger(DVStitcher.class.getName());
         VideoCapture videoCapture1 = new VideoCapture("/tmp/pre/seoul_21_l000.mp4");
         VideoCapture videoCapture2 = new VideoCapture("~/seoul_21_l.mp4");
-        logger.info("God please");
-        logger.info(videoCapture1.isOpened());
-        logger.info(videoCapture2.isOpened());
+        System.out.println("God please");
+        System.out.println(videoCapture1.isOpened());
+        System.out.println(videoCapture2.isOpened());
     }
 }
